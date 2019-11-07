@@ -1,0 +1,10 @@
+{
+  "name": "pixelkit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "community-sdk": "KanoComputing/community-sdk#nodejs",
+    "pi-camera": "^1.3.0"
+  }
+}
