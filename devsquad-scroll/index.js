@@ -1,32 +1,19 @@
-/**
-This example will stream a series of single color "frames" to Pixel Kit.
-*/
-const DeviceManager = require('../node_modules/community-sdk/communitysdk.js').DeviceManager;
-const PixelKit = require('../node_modules/community-sdk/communitysdk.js').RetailPixelKit;
-const frames = require('./frames.json').frames
+const {PixelKit} = require('../PixelKitGFX')
+const rawFrames = require('./frames.json').frames
 
-var stopStreaming = null
+var streamingInterval = null
+var stopStreaming = function(){
+    clearInterval(streamingInterval)
+}
 
-DeviceManager.listConnectedDevices()
-.then((devices) => {
-    // Filter devices to find a Motion Sensor Kit
-    let rpk = devices.find((device) => {
-        return device instanceof PixelKit;
-    });
-    if(!rpk) {
-        console.log('No Pixel Kit was found :(');
-    } else {
-        var frameNumber = 0
-        stopStreaming = setInterval(() => {
-		try{
-                    rpk.streamFrame(frames[frameNumber])
-                        .catch((error) => {
-                            console.log('Problem streaming frame', error);
-                        });
-        		frameNumber = frameNumber === frames.length-1 ? 0 : frameNumber+1
-		}catch(e) { console.log(e) }
-        }, 100);
-    }
-});
+var kit = new PixelKit()
+kit.onConnect(rpk => {
+    var frameNumber = 0
+    streamingInterval = setInterval(() => {
+        rpk.streamFrame(rawFrames[frameNumber]).catch((error) => {});
+        frameNumber = frameNumber === rawFrames.length-1 ? 0 : frameNumber+1
+    }, 83);
+})
 
-module.export = { "stopStreaming": stopStreaming }	
+
+module.exports = { "stopStreaming": stopStreaming }	
